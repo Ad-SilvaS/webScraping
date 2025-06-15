@@ -59,23 +59,3 @@ O script realiza as seguintes operações:
     Gera um arquivo CSV chamado placas.csv com os dados coletados
 
     Exibe os dados formatados em tabela no console usando a biblioteca Tabulate
-
-
-## Personalização
-Você pode modificar o script para:
-
-- Alterar a URL para raspar outras categorias de produtos
-
-- Ajustar os seletores CSS caso o site mapeie sua estrutura
-
-- Modificar o tempo de espera (time.sleep) conforme a velocidade da sua conexão
-
-- Adicionar mais campos para coleta (como avaliações, frete, etc.)
-
-## Limitações e Considerações
-
-- Política de Robôs: Verifique se o site permite web scraping em seus termos de serviço
-
-- Estrutura do Site: Mudanças no layout do site podem quebrar o script
-
-- Dados Dinâmicos: Alguns dados podem ser carregados via JavaScript após o carregamento inicial da página
