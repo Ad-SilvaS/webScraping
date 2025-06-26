@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,20 +9,23 @@ from tabulate import tabulate
 import pandas as pd
 import time
 
-service = Service()
 options = webdriver.ChromeOptions()
-driver = webdriver.Chrome(service=service, options=options)
+service = Service()
+driver = webdriver.Chrome(options=options, service=service)
 url = 'https://www.kabum.com.br/hardware/placa-de-video-vga'
 driver.get(url)
+driver.maximize_window()
 time.sleep(3)
 
 productsList = []
 pricesList = []
 
+wait = WebDriverWait(driver, 10)
+actions = ActionChains(driver)
 while True:
     try:
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'span.nameCard'))
+        wait.until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, 'productCard'))
         )
 
         names = driver.find_elements(By.CSS_SELECTOR, 'span.nameCard')
@@ -32,13 +37,14 @@ while True:
         productsList.extend(name)
         pricesList.extend(price)
 
-        next_li = driver.find_element(By.CSS_SELECTOR, 'li.next')
-        if 'disabled' in next_li.get_attribute('class'): break
+        li_next = driver.find_element(By.CLASS_NAME, 'next')
+        if 'disabled' in li_next.get_attribute('class'): break
+        
+        next_link = li_next.find_element(By.CLASS_NAME, 'nextLink')
 
-        next_link = next_li.find_element(By.CSS_SELECTOR, 'a.nextLink')
+        scroll_origin = ScrollOrigin.from_element(li_next)
 
-        driver.execute_script('arguments[0].scrollIntoView();', next_link)
-        driver.execute_script('arguments[0].click();', next_link)
+        actions.scroll_to_element(li_next).scroll_from_origin(scroll_origin, 0, 100).move_to_element(next_link).click().perform()
 
         time.sleep(3)
     except Exception as e:
